@@ -1,0 +1,111 @@
+<!-- Robot in courtesy of:
+    http://classic.gazebosim.org/tutorials?tut=build_robot&cat=build_robot
+    http://classic.gazebosim.org/tutorials?tut=build_model&cat=build_robot
+    https://answers.gazebosim.org//question/13416/how-to-disable-gravity-only-for-a-specific-model-in-gazebo/
+    http://wiki.ros.org/simulator_gazebo/Tutorials/SpawningObjectInSimulation
+-->
+<robot name="dummy">
+    <link name="base_link">
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+            <origin xyz="0 0 0"/>
+            <mass value="20.0"/>
+            <inertia ixx="0.52083125" ixy="0.0" ixz="0.0" iyy="0.52083125" iyz="0.0" izz="0.83333" />
+        </inertial>
+        <visual name="visual">
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size=".50 .50 .25"/>
+            </geometry>
+        </visual>
+        <collision name="collision">
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size=".50 .50 .25"/>
+            </geometry>
+        </collision>
+    </link>
+    <gazebo reference="base_link">
+        <!-- <material>Gazebo/Blue</material> -->
+        <turnGravityOff>1</turnGravityOff>
+    </gazebo>
+
+    <link name="sonar_link">
+      <!--
+          Be careful to setup the coefficients for the inertial tensor,
+          otherwise your model will become unstable on Gazebo
+        -->
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01"/>
+      </inertial>
+      <visual name="visual">
+        <origin xyz="0 0 0" rpy="0 1.5707963 0"/>
+        <geometry>
+          <cylinder length="0.2" radius="0.04"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="sonar_joint" type="revolute">
+      <origin xyz="0.15 0 0.15" rpy="0 0.3 0"/>
+      <axis xyz="0 0 1" />
+      <parent link="base_link" />
+      <child link="sonar_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <gazebo reference="sonar_link">
+        <material>Gazebo/Blue</material>
+        <turnGravityOff>1</turnGravityOff>
+        <sensor name='FLSonar' type='camera'>
+            <plugin name="SonarVisual" filename="libForwardLookingSonarGazebo.so" >
+                <topic>/dummy/front_looking_sonar</topic>
+                <debug>1</debug>
+                <link_reference>sonar_link</link_reference>
+                <horizontal_fov>0.785</horizontal_fov>
+                <vfov>0.785</vfov>
+                <bin_count>720</bin_count>
+                <beam_count>720</beam_count>
+                <image>
+                    <width>720</width>
+                    <height>720</height>
+                    <format>R32G32B32</format>
+                </image>
+                <clip>
+                    <near>1</near>
+                    <far>5</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.1</stddev>
+                </noise>
+            </plugin>  
+        </sensor>  
+    </gazebo>
+
+    <!-- This separation is incredibly crucial:
+        https://github.com/gazebosim/ros_gz/issues/109#issuecomment-689142931
+        https://classic.gazebosim.org/tutorials?tut=ros_gzplugins
+    -->
+    <gazebo>
+        <plugin name="dummy_control" filename="libdummy_plugin.so">
+            <!-- D term used here as a damper -->
+            <pid_x>2 0.0 12</pid_x>
+            <pid_y>2 0.0 12</pid_y>
+            <pid_z>2 0.0 12</pid_z>
+            <pid_r>1 0.0 6</pid_r>
+            <pid_p>1 0.0 6</pid_p>
+            <pid_w>1 0.0 6</pid_w>
+            <pose>3 4 2 0 0 1.2</pose>
+            <max_force>100</max_force>
+            <max_torque>100</max_torque>
+        </plugin>
+    </gazebo>
+</robot>
