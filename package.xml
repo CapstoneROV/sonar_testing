@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>gpp_testing</name>
+  <name>sonar_testing</name>
   <version>0.0.0</version>
-  <description>The gpp_testing package</description>
+  <description>The sonar_testing package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -36,7 +36,7 @@
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
-  <depend>geeometry_msgs sonar_msgs</depend>
+  <depend>roscpp std_msgs geeometry_msgs sonar_msgs forward_looking_sonar_gazebo</depend>
   <!-- Use build_depend for packages you need at compile time: -->
   <!--   <build_depend>message_generation</build_depend> -->
   <!-- Use build_export_depend for packages you need in order to build against this package: -->

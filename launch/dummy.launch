@@ -6,7 +6,7 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="model" default="$(find gpp_testing)/urdf/dummy.urdf"/>
+  <arg name="model" default="$(find sonar_testing)/urdf/dummy.urdf"/>
   <arg name="name" default="dummy"/>
   <arg name="topics_ns" default="dummy"/>
 
@@ -23,9 +23,5 @@
   </include>
 
   <!-- Can be run in terminal after 'roslaunch gazebo_ros empty_world.launch -->
-  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-urdf -file '$(find gpp_testing)/urdf/dummy.urdf' -z 0.5 -model dummy" respawn="false" output="screen"/>
-
-  <!-- push robot_description to factory and spawn robot in gazebo
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 1.0 -unpause -urdf -model robot -param robot_description" respawn="false" output="screen" /> -->
+  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-urdf -file '$(find sonar_testing)/urdf/dummy.urdf' -z 0.5 -model dummy" respawn="false" output="screen"/>
 </launch>

@@ -4,7 +4,7 @@
 # http://wiki.ros.org/catkin/CMakeLists.txt#Overall_Structure_and_Ordering
 
 cmake_minimum_required(VERSION 3.0.2)
-project(gpp_testing)
+project(sonar_testing)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	std_msgs
 	geometry_msgs
-	forward_looking_sonar_gazebo
 )
 
 ## System dependencies are found with CMake's conventions
