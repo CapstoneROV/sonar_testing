@@ -61,8 +61,6 @@
       <limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
     <gazebo reference="sonar_link">
-        <material>Gazebo/Blue</material>
-        <turnGravityOff>1</turnGravityOff>
         <sensor name='FLSonar' type='camera'>
             <plugin name="SonarVisual" filename="libForwardLookingSonarGazebo.so" >
                 <topic>/dummy/front_looking_sonar</topic>
@@ -97,13 +95,12 @@
     <gazebo>
         <plugin name="dummy_control" filename="libdummy_plugin.so">
             <!-- D term used here as a damper -->
-            <pid_x>2 0.0 12</pid_x>
-            <pid_y>2 0.0 12</pid_y>
-            <pid_z>2 0.0 12</pid_z>
-            <pid_r>1 0.0 6</pid_r>
-            <pid_p>1 0.0 6</pid_p>
-            <pid_w>1 0.0 6</pid_w>
-            <pose>3 4 2 0 0 1.2</pose>
+            <pid_x>2 0.0 10</pid_x>
+            <pid_y>2 0.0 10</pid_y>
+            <pid_z>2 0.0 10</pid_z>
+            <pid_r>1 0.0 5</pid_r>
+            <pid_p>1 0.0 5</pid_p>
+            <pid_w>1 0.0 5</pid_w>
             <max_force>100</max_force>
             <max_torque>100</max_torque>
         </plugin>

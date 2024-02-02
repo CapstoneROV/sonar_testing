@@ -45,8 +45,8 @@ class PIDController
       this->link = _link;
       this->targetPose = _link->WorldPose();
       
-      double linear_imax = 100.0;
-      double angular_imax = 100.0;
+      double linear_imax = 10000.0;
+      double angular_imax = 10000.0;
 
       // Add a PID controller for each DoF
       for (int i = 0; i < 3; i++)

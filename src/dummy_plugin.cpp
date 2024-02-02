@@ -89,8 +89,6 @@ namespace gazebo
           _sdf->GetValue()->Get(pid_params[4]);
         else if (param == "pid_w")
           _sdf->GetValue()->Get(pid_params[5]);
-        else if (param == "pose")
-          _sdf->GetValue()->Get(pose);
         else if (param == "max_force")
           _sdf->GetValue()->Get(max_force);
         else if (param == "max_torque")
