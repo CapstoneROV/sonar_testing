@@ -6,7 +6,7 @@
 -->
 <robot name="dummy">
     <link name="base_link">
-        <pose>0 0 0 0 0 0</pose>
+        <!-- <pose>0 0 0 0 0 0</pose> -->
         <inertial>
             <origin xyz="0 0 0"/>
             <mass value="20.0"/>
@@ -26,9 +26,44 @@
         </collision>
     </link>
     <gazebo reference="base_link">
-        <!-- <material>Gazebo/Blue</material> -->
         <turnGravityOff>1</turnGravityOff>
     </gazebo>
+
+    <!-- Link must have inertia, otherwise overlooked by URDF parser -->
+    <link name="imu_link">
+        <inertial>
+            <origin xyz="0 0 0"/>
+            <mass value="0.01"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+    <joint name="imu_joint" type="revolute">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <limit upper="0" lower="0" effort="0" velocity="0"/>
+    </joint>
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
+            <topic>__default_topic__</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>imu</topicName>
+                <bodyName>imu_link</bodyName>
+                <updateRateHZ>10.0</updateRateHZ>
+                <gaussianNoise>0.0</gaussianNoise>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <frameName>imu_link</frameName>
+                <initialOrientationAsReference>false</initialOrientationAsReference>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
 
     <link name="sonar_link">
       <!--
@@ -103,6 +138,14 @@
             <pid_w>1 0.0 5</pid_w>
             <max_force>100</max_force>
             <max_torque>100</max_torque>
+        </plugin>
+        
+        <!-- Send joint states: https://answers.ros.org/question/355311/gazebo-is-not-able-to-send-the-joint-states-to-generate-tf-tree/ -->
+        <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+            <robotNamespace>/dummy</robotNamespace>
+            <!-- Must have this list of joints -->
+            <jointName>imu_joint, sonar_joint</jointName>
+            <updateRate>30</updateRate>
         </plugin>
     </gazebo>
 </robot>

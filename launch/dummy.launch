@@ -6,12 +6,12 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="model" default="$(find sonar_testing)/urdf/dummy.urdf"/>
+  <!-- <arg name="model" default="$(find sonar_testing)/urdf/dummy.urdf"/> -->
   <arg name="name" default="dummy"/>
   <arg name="topics_ns" default="dummy"/>
 
-  <!-- Send URDF to param server
-  <param name="table_description" command="$(find xacro)/xacro.py $(find gazebo_worlds)/objects/table.urdf.xacro" /> -->
+  <!-- Send URDF to param server -->
+  <param name="robot_description" textfile="$(find sonar_testing)/urdf/dummy.urdf"/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -23,5 +23,10 @@
   </include>
 
   <!-- Can be run in terminal after 'roslaunch gazebo_ros empty_world.launch -->
-  <node name="spawn_table" pkg="gazebo_ros" type="spawn_model" args="-urdf -file '$(find sonar_testing)/urdf/dummy.urdf' -z 0.5 -model dummy" respawn="false" output="screen"/>
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model dummy" respawn="false" output="screen"/>
+
+  <!-- Publish robot TF -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <remap from="/joint_states" to="/dummy/joint_states"/>
+  </node>
 </launch>
