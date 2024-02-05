@@ -147,5 +147,14 @@
             <jointName>imu_joint, sonar_joint</jointName>
             <updateRate>30</updateRate>
         </plugin>
+
+        <!-- Link base_link to map: https://answers.gazebosim.org//question/5308/getting-the-gazebo-plugin-p3d-working-hydro/ -->
+        <plugin name="map_to_base_link" filename="libgazebo_ros_p3d.so">
+			<alwaysOn>true</alwaysOn>
+			<updateRate>30</updateRate>
+			<bodyName>base_link</bodyName>
+			<topicName>dummy/base_link</topicName>
+			<frameName>map</frameName>
+		</plugin>
     </gazebo>
 </robot>

@@ -25,8 +25,11 @@
   <!-- Can be run in terminal after 'roslaunch gazebo_ros empty_world.launch -->
   <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model dummy" respawn="false" output="screen"/>
 
-  <!-- Publish robot TF -->
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+  <!-- Publish robot TF, using joint states published in the URDF -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="dummy_publisher">
       <remap from="/joint_states" to="/dummy/joint_states"/>
   </node>
+
+  <!-- Bridge map and base_link, using gazebo_ros_p3d output in the URDF -->
+  <node pkg="message_to_tf" type="message_to_tf" name="map_to_dummy" args="dummy/base_link"/>
 </launch>
