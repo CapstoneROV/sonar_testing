@@ -73,6 +73,7 @@ namespace gazebo
       ignition::math::Vector3d pid_params[6];
       ignition::math::Pose3d pose; 
       double max_force, max_torque;
+      std::string link_name;
       _sdf = _sdf->GetFirstElement();
       do
       {
@@ -93,12 +94,14 @@ namespace gazebo
           _sdf->GetValue()->Get(max_force);
         else if (param == "max_torque")
           _sdf->GetValue()->Get(max_torque);
+        else if (param == "link_name")
+          _sdf->GetValue()->Get(link_name);
         _sdf = _sdf->GetNextElement();
       } while (_sdf);
 
       // Start controller 
       this->controller.Start(
-        _model->GetLink("base_link"), pid_params, max_force, max_torque
+        _model->GetLink(link_name), pid_params, max_force, max_torque
       );
 
       // Create our ROS node. This acts in a similar manner to
