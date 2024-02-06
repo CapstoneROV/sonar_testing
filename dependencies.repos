@@ -1,0 +1,9 @@
+repositories:
+  forward_looking_sonar_gazebo:
+    type: git
+    url: https://github.com/CapstoneROV/forward_looking_sonar_gazebo
+    version: master
+  sonar_msgs:
+    type: git
+    url: https://github.com/Brazilian-Institute-of-Robotics/sonar_msgs
+    version: master
