@@ -1,0 +1,20 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="fan_topic" default="null_fan_topic"/>
+  <arg name="rect_topic" default="null_rect_topic"/>
+  <arg name="origin_x" default="0.0"/>
+  <arg name="origin_y" default="0.0"/>
+  <arg name="top_x" default="0.0"/>
+  <arg name="top_y" default="0.0"/>
+
+  <!-- Launch sonar_transformer: http://wiki.ros.org/roslaunch/XML/node -->
+  <node name="sonar_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="$(arg fan_topic)"/>
+    <param name="rect_topic" value="$(arg rect_topic)"/>
+    <param name="origin_x" value="$(arg origin_x)"/>
+    <param name="origin_y" value="$(arg origin_y)"/>
+    <param name="top_x" value="$(arg top_x)"/>
+    <param name="top_y" value="$(arg top_y)"/>
+  </node>
+
+</launch>

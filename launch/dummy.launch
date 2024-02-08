@@ -34,4 +34,14 @@
 
   <!-- Bridge map and base_link, using gazebo_ros_p3d output in the URDF -->
   <node pkg="message_to_tf" type="message_to_tf" name="map_to_dummy" args="dummy/base_link"/>
+
+  <!-- Launch sonar image converters, from fan shape to rectangular -->
+  <include file="$(find sonar_testing)/launch/sonar_transformer.launch">
+    <arg name="fan_topic" value="/dummy/mbe_sonar"/>
+    <arg name="rect_topic" value="/dummy/mbe_sonar_rect"/>
+    <arg name="origin_x" value="0.0"/>
+    <arg name="origin_y" value="0.0"/>
+    <arg name="top_x" value="0.0"/>
+    <arg name="top_y" value="0.0"/>
+  </include>
 </launch>
