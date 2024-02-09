@@ -5,215 +5,251 @@
     http://wiki.ros.org/simulator_gazebo/Tutorials/SpawningObjectInSimulation
 -->
 <robot name="dummy">
-    <link name="base_link">
-        <!-- <pose>0 0 0 0 0 0</pose> -->
-        <inertial>
-            <origin xyz="0 0 0"/>
-            <mass value="20.0"/>
-            <inertia ixx="0.52083125" ixy="0.0" ixz="0.0" iyy="0.52083125" iyz="0.0" izz="0.83333" />
-        </inertial>
-        <visual name="visual">
-            <origin xyz="0 0 0"/>
-            <geometry>
-                <box size=".50 .50 .25"/>
-            </geometry>
-        </visual>
-        <collision name="collision">
-            <origin xyz="0 0 0"/>
-            <geometry>
-                <box size=".50 .50 .25"/>
-            </geometry>
-        </collision>
-    </link>
-    <gazebo reference="base_link">
-        <turnGravityOff>1</turnGravityOff>
-    </gazebo>
+  <link name="base_link">
+    <!-- <pose>0 0 0 0 0 0</pose> -->
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="20.0" />
+      <inertia ixx="0.52083125" ixy="0.0" ixz="0.0" iyy="0.52083125" iyz="0.0" izz="0.83333" />
+    </inertial>
+    <visual name="visual">
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size=".50 .50 .25" />
+      </geometry>
+    </visual>
+    <collision name="collision">
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size=".50 .50 .25" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_link">
+    <turnGravityOff>1</turnGravityOff>
+  </gazebo>
 
-    <!-- Link must have inertia, otherwise overlooked by URDF parser -->
-    <link name="imu_link">
-        <inertial>
-            <origin xyz="0 0 0"/>
-            <mass value="0.01"/>
-            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
-        </inertial>
-    </link>
-    <joint name="imu_joint" type="revolute">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <axis xyz="0 0 1"/>
-        <parent link="base_link"/>
-        <child link="imu_link"/>
-        <limit upper="0" lower="0" effort="0" velocity="0"/>
-    </joint>
-    <gazebo reference="imu_link">
-        <turnGravityOff>1</turnGravityOff>
-        <sensor name="imu_sensor" type="imu">
-            <always_on>true</always_on>
-            <update_rate>100</update_rate>
-            <visualize>true</visualize>
-            <topic>__default_topic__</topic>
-            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-                <topicName>imu</topicName>
-                <bodyName>imu_link</bodyName>
-                <updateRateHZ>10.0</updateRateHZ>
-                <gaussianNoise>0.0</gaussianNoise>
-                <xyzOffset>0 0 0</xyzOffset>
-                <rpyOffset>0 0 0</rpyOffset>
-                <frameName>imu_link</frameName>
-                <initialOrientationAsReference>false</initialOrientationAsReference>
-            </plugin>
-            <pose>0 0 0 0 0 0</pose>
-        </sensor>
-    </gazebo>
+  <!-- Link must have inertia, otherwise overlooked by URDF parser -->
+  <link name="imu_link">
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <parent link="base_link" />
+    <child link="imu_link" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+  <gazebo reference="imu_link">
+    <turnGravityOff>1</turnGravityOff>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>10.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+        <initialOrientationAsReference>false</initialOrientationAsReference>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
 
-    <!-- Mount Ping360 sonar -->
-    <link name="ping360_sonar_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01"/>
-      </inertial>
-      <visual name="visual">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <cylinder length="0.12" radius="0.04"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.1 0.1 0.1"/>
-        </geometry>
-      </collision>
-    </link>
-    <joint name="ping360_sonar_joint" type="revolute">
-      <origin xyz="0.15 0 0.175" rpy="0 0 0"/>
-      <axis xyz="0 0 1" />
-      <parent link="base_link" />
-      <child link="ping360_sonar_link" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
-    </joint>
-    <gazebo reference="ping360_sonar_link">
-        <turnGravityOff>1</turnGravityOff>
-        <sensor name='Ping360Sonar' type='camera'>
-            <plugin name="Ping360SonarVisual" filename="libForwardLookingSonarGazebo.so" >
-                <topic>/dummy/ping360_sonar</topic>
-                <debug>1</debug>
-                <link_reference>ping360_sonar_link</link_reference>
-                <horizontal_fov>2.0944</horizontal_fov> <!-- 120 deg -->
-                <vfov>0.436332</vfov> <!-- 25 deg -->
-                <bin_count>1024</bin_count>
-                <beam_count>128</beam_count>
-                <image>
-                    <width>1024</width>
-                    <height>1024</height>
-                    <format>R32G32B32</format>
-                </image>
-                <clip>
-                    <near>0.75</near>
-                    <far>10</far>
-                </clip>
-                <disable_color>true</disable_color>
-            </plugin>  
-        </sensor>
-    </gazebo>
+  <!-- Mount Ping360 sonar -->
+  <link name="ping360_sonar_link">
+    <inertial>
+      <mass value="0.01" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+    </inertial>
+    <visual name="visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.12" radius="0.04" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="ping360_sonar_joint" type="revolute">
+    <origin xyz="0.15 0 0.175" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <parent link="base_link" />
+    <child link="ping360_sonar_link" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+  <gazebo reference="ping360_sonar_link">
+    <turnGravityOff>1</turnGravityOff>
+    <sensor name="Ping360Sonar" type="camera">
+      <plugin name="Ping360SonarVisual" filename="libForwardLookingSonarGazebo.so">
+        <topic>/dummy/ping360_sonar</topic>
+        <debug>1</debug>
+        <link_reference>ping360_sonar_link</link_reference>
+        <horizontal_fov>2.09439510239</horizontal_fov> <!-- 120 deg -->
+        <vfov>0.436332</vfov> <!-- 25 deg -->
+        <bin_count>1024</bin_count>
+        <beam_count>128</beam_count>
+        <image>
+          <width>1024</width>
+          <height>1024</height>
+          <format>R32G32B32</format>
+        </image>
+        <clip>
+          <near>0.75</near>
+          <far>10</far>
+        </clip>
+        <disable_color>true</disable_color>
+      </plugin>
+    </sensor>
 
-     <!-- Mount MBE sonar: loosely based on https://sonoptix.com/specifications -->
-    <link name="mbe_sonar_link">
-      <inertial>
-        <mass value="0.78"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01"/>
-      </inertial>
-      <visual name="visual_cylinder">
-        <origin xyz="0.044 0 0" rpy="0 0 0"/>
-        <geometry>
-          <cylinder length="0.0423" radius="0.05"/>
-        </geometry>
-        <material name="mbe_material">
-          <ambient>0.3 0.6 0.1 1</ambient>
-          <diffuse>0.6 0.6 0.6 1</diffuse>
-          <specular>0.2 0.2 0.2 0</specular>
-          <emissive>0 0 0 1</emissive>
-        </material>
-      </visual>
-      <visual name="visual_box">
-        <origin xyz="-0.011 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.11 0.1 0.0423"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.1 0.1 0.1"/>
-        </geometry>
-      </collision>
-    </link>
-    <joint name="mbe_sonar_joint" type="revolute">
-      <origin xyz="0.15 0 -0.2" rpy="0 0.174533 0"/>
-      <axis xyz="0 0 1" />
-      <parent link="base_link" />
-      <child link="mbe_sonar_link" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
-    </joint>
-    <gazebo reference="mbe_sonar_link">
-        <turnGravityOff>1</turnGravityOff>
-        <sensor name='MBESonar' type='camera'>
-            <plugin name="MBESonarVisual" filename="libForwardLookingSonarGazebo.so" >
-                <topic>/dummy/mbe_sonar</topic>
-                <debug>1</debug>
-                <link_reference>mbe_sonar_link</link_reference>
-                <horizontal_fov>1.57079632679</horizontal_fov> <!-- 90 deg -->
-                <vfov>0.34906585039</vfov> <!-- 20 deg -->
-                <bin_count>1024</bin_count>
-                <beam_count>256</beam_count>
-                <image>
-                    <width>1024</width>
-                    <height>1024</height>
-                    <format>R32G32B32</format>
-                </image>
-                <clip>
-                    <near>0.3</near>
-                    <far>10</far>
-                </clip>
-                <disable_color>true</disable_color>
-            </plugin>  
-        </sensor>  
-    </gazebo>
+    <!-- Plugin for point cloud (simulation only):
+    http://classic.gazebosim.org/tutorials?tut=ros_depth_camera -->
+    <sensor name="Ping360Depth" type="depth">
+      <update_rate>1</update_rate>
+      <camera>
+        <update_rate>0.0</update_rate>
+        <horizontal_fov>2.09439510239</horizontal_fov>
+        <image>
+          <width>128</width>
+          <!-- Approximately 128 * tan(25/2 deg) / tan(120/2 deg) -->
+          <height>16</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.75</near>
+          <far>10.0</far>
+        </clip>
+      </camera>
+      <plugin name="Ping360SonarDepth" filename="libgazebo_ros_openni_kinect.so">
+        <baseline>0.2</baseline>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>Ping360Depth</cameraName>
+        <imageTopicName>/dummy/ping360_sim_depth/color/image_raw</imageTopicName>
+        <cameraInfoTopicName>/dummy/ping360_sim_depth/color/camera_info</cameraInfoTopicName>
+        <depthImageTopicName>/dummy/ping360_sim_depth/depth/image_raw</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/dummy/ping360_sim_depth/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/dummy/ping360_sim_depth/depth/points</pointCloudTopicName>
+        <frameName>ping360_sonar_link</frameName>
+        <pointCloudCutoff>0.75</pointCloudCutoff>
+        <pointCloudCutoffMax>10.0</pointCloudCutoffMax>
+      </plugin>
+    </sensor>
+  </gazebo>
 
-    <!-- This separation is incredibly crucial:
+  <!-- Mount MBE sonar: loosely based on https://sonoptix.com/specifications -->
+  <link name="mbe_sonar_link">
+    <inertial>
+      <mass value="0.78" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+    </inertial>
+    <visual name="visual_cylinder">
+      <origin xyz="0.044 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.0423" radius="0.05" />
+      </geometry>
+      <material name="mbe_material">
+        <ambient>0.3 0.6 0.1 1</ambient>
+        <diffuse>0.6 0.6 0.6 1</diffuse>
+        <specular>0.2 0.2 0.2 0</specular>
+        <emissive>0 0 0 1</emissive>
+      </material>
+    </visual>
+    <visual name="visual_box">
+      <origin xyz="-0.011 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.11 0.1 0.0423" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="mbe_sonar_joint" type="revolute">
+    <origin xyz="0.15 0 -0.2" rpy="0 0.174533 0" />
+    <axis xyz="0 0 1" />
+    <parent link="base_link" />
+    <child link="mbe_sonar_link" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+  <gazebo reference="mbe_sonar_link">
+    <turnGravityOff>1</turnGravityOff>
+    <sensor name="MBESonar" type="camera">
+      <plugin name="MBESonarVisual" filename="libForwardLookingSonarGazebo.so">
+        <topic>/dummy/mbe_sonar</topic>
+        <debug>1</debug>
+        <link_reference>mbe_sonar_link</link_reference>
+        <horizontal_fov>1.57079632679</horizontal_fov> <!-- 90 deg -->
+        <vfov>0.34906585039</vfov> <!-- 20 deg -->
+        <bin_count>1024</bin_count>
+        <beam_count>256</beam_count>
+        <image>
+          <width>1024</width>
+          <height>1024</height>
+          <format>R32G32B32</format>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>10</far>
+        </clip>
+        <disable_color>true</disable_color>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- This separation is incredibly crucial:
         https://github.com/gazebosim/ros_gz/issues/109#issuecomment-689142931
         https://classic.gazebosim.org/tutorials?tut=ros_gzplugins
     -->
-    <gazebo>
-        <plugin name="dummy_control" filename="libdummy_plugin.so">
-            <!-- D term used here as a damper -->
-            <pid_x>2 0.0 10</pid_x>
-            <pid_y>2 0.0 10</pid_y>
-            <pid_z>2 0.0 10</pid_z>
-            <pid_r>1 0.0 5</pid_r>
-            <pid_p>1 0.0 5</pid_p>
-            <pid_w>1 0.0 5</pid_w>
-            <max_force>100</max_force>
-            <max_torque>100</max_torque>
-            <link_name>base_link</link_name>
-        </plugin>
-        
-        <!-- Send joint states: https://answers.ros.org/question/355311/gazebo-is-not-able-to-send-the-joint-states-to-generate-tf-tree/ -->
-        <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
-            <robotNamespace>dummy</robotNamespace>
-            <!-- Must have this list of joints -->
-            <jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint</jointName>
-            <updateRate>30</updateRate>
-        </plugin>
+  <gazebo>
+    <plugin name="dummy_control" filename="libdummy_plugin.so">
+      <!-- D term used here as a damper -->
+      <pid_x>2 0.0 10</pid_x>
+      <pid_y>2 0.0 10</pid_y>
+      <pid_z>2 0.0 10</pid_z>
+      <pid_r>1 0.0 5</pid_r>
+      <pid_p>1 0.0 5</pid_p>
+      <pid_w>1 0.0 5</pid_w>
+      <max_force>100</max_force>
+      <max_torque>100</max_torque>
+      <link_name>base_link</link_name>
+    </plugin>
 
-        <!-- Link base_link to map: https://answers.gazebosim.org//question/5308/getting-the-gazebo-plugin-p3d-working-hydro/ -->
-        <plugin name="map_to_base_link" filename="libgazebo_ros_p3d.so">
-			<alwaysOn>true</alwaysOn>
-			<updateRate>30</updateRate>
-			<bodyName>base_link</bodyName>
-			<topicName>dummy/base_link</topicName>
-			<frameName>map</frameName>
-		</plugin>
-    </gazebo>
+    <!-- Send joint states:
+    https://answers.ros.org/question/355311/gazebo-is-not-able-to-send-the-joint-states-to-generate-tf-tree/ -->
+    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+      <robotNamespace>dummy</robotNamespace>
+      <!-- Must have this list of joints -->
+      <jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint</jointName>
+      <updateRate>30</updateRate>
+    </plugin>
+
+    <!-- Link base_link to map:
+    https://answers.gazebosim.org//question/5308/getting-the-gazebo-plugin-p3d-working-hydro/ -->
+    <plugin name="map_to_base_link" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>30</updateRate>
+      <bodyName>base_link</bodyName>
+      <topicName>dummy/base_link</topicName>
+      <frameName>map</frameName>
+    </plugin>
+  </gazebo>
 </robot>
