@@ -36,12 +36,26 @@
   <node pkg="message_to_tf" type="message_to_tf" name="map_to_dummy" args="dummy/base_link"/>
 
   <!-- Launch sonar image converters, from fan shape to rectangular -->
-  <include file="$(find sonar_testing)/launch/sonar_transformer.launch">
-    <arg name="fan_topic" value="/dummy/mbe_sonar"/>
-    <arg name="rect_topic" value="/dummy/mbe_sonar_rect"/>
-    <arg name="origin_x" value="0.0"/>
-    <arg name="origin_y" value="0.0"/>
-    <arg name="top_x" value="0.0"/>
-    <arg name="top_y" value="0.0"/>
-  </include>
+  <node name="mbe_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="/dummy/mbe_sonar"/>
+    <param name="rect_topic" value="/dummy/mbe_sonar_rect"/>
+    <param name="origin_x" value="512"/>
+    <param name="origin_y" value="512"/>
+    <param name="top_x" value="0"/>
+    <param name="top_y" value="512"/>
+    <param name="beam_count" value="256"/>
+    <param name="bin_count" value="512"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+  </node>
+  <node name="ping360_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="/dummy/ping360_sonar"/>
+    <param name="rect_topic" value="/dummy/ping360_sonar_rect"/>
+    <param name="origin_x" value="512"/>
+    <param name="origin_y" value="512"/>
+    <param name="top_x" value="0"/>
+    <param name="top_y" value="512"/>
+    <param name="beam_count" value="128"/>
+    <param name="bin_count" value="512"/>
+    <param name="horizontal_fov" value="2.09439510239"/>
+  </node>
 </launch>

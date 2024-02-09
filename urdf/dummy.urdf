@@ -112,11 +112,7 @@
                     <near>0.75</near>
                     <far>10</far>
                 </clip>
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.1</stddev>
-                </noise>
+                <disable_color>true</disable_color>
             </plugin>  
         </sensor>
     </gazebo>
@@ -180,11 +176,7 @@
                     <near>0.3</near>
                     <far>10</far>
                 </clip>
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.1</stddev>
-                </noise>
+                <disable_color>true</disable_color>
             </plugin>  
         </sensor>  
     </gazebo>

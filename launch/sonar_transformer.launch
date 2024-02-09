@@ -6,6 +6,9 @@
   <arg name="origin_y" default="0.0"/>
   <arg name="top_x" default="0.0"/>
   <arg name="top_y" default="0.0"/>
+  <arg name="beam_count" default="0"/>
+  <arg name="bin_count" default="0"/>
+  <arg name="horizontal_fov" default="0.0"/>
 
   <!-- Launch sonar_transformer: http://wiki.ros.org/roslaunch/XML/node -->
   <node name="sonar_transformer" pkg="sonar_testing" type="sonar_transformer">
@@ -15,6 +18,9 @@
     <param name="origin_y" value="$(arg origin_y)"/>
     <param name="top_x" value="$(arg top_x)"/>
     <param name="top_y" value="$(arg top_y)"/>
+    <param name="beam_count" value="$(arg beam_count)"/>
+    <param name="bin_count" value="$(arg bin_count)"/>
+    <param name="horizontal_fov" value="$(arg horizontal_fov)"/>
   </node>
 
 </launch>
