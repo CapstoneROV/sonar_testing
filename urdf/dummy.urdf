@@ -121,7 +121,6 @@
     <sensor name="Ping360Depth" type="depth">
       <update_rate>1</update_rate>
       <camera>
-        <update_rate>0.0</update_rate>
         <horizontal_fov>2.09439510239</horizontal_fov>
         <image>
           <width>128</width>

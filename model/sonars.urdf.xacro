@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="deg2rad" value="${pi / 180}"/>
+
+	<!-- ================================= -->
+	<!-- Macro for the sonar sensor itself -->
+	<xacro:macro name="sonar_macro" params=
+		"sonar_link topic hfov vfov bin_count beam_count image_width image_height
+		clip_near clip_far image_format=R32G32B32 disable_color:=true
+		faux_depth:=false faux_depth_namespace:=''
+		prefix:=^ namespace:=^ gravity:=^"
+	>
+		<gazebo reference="${sonar_link}">
+			<!-- Plugin for sonar -->
+			<xacro:unless value="${gravity}">
+				<turnGravityOff>1</turnGravityOff>
+			</xacro:unless>
+			<sensor name="Sonar" type="camera">
+				<plugin name="FLS" filename="libForwardLookingSonarGazebo.so">
+					<topic>${namespace}/${topic}</topic>
+					<debug>1</debug>
+					<link_reference>${sonar_link}</link_reference>
+					<horizontal_fov>${hfov}</horizontal_fov>
+					<vfov>${vfov}</vfov>
+					<bin_count>${bin_count}</bin_count>
+					<beam_count>${beam_count}</beam_count>
+					<image>
+						<width>${image_width}</width>
+						<height>${image_height}</height>
+						<format>${image_format}</format>
+					</image>
+					<clip>
+						<near>${clip_near}</near>
+						<far>${clip_far}</far>
+					</clip>
+					<disable_color>${disable_color}</disable_color>
+				</plugin>
+			</sensor>
+
+			<!-- Plugin for point cloud (simulation only):
+			http://classic.gazebosim.org/tutorials?tut=ros_depth_camera -->
+			<xacro:if value="${faux_depth}">
+				<sensor name="Depth" type="depth">
+					<update_rate>1</update_rate>
+					<camera>
+						<horizontal_fov>${hfov}</horizontal_fov>
+						<image>
+							<width>${beam_count}</width>
+							<!-- Approximately 128 * tan(25/2 deg) / tan(120/2 deg) -->
+							<height>${round(beam_count * tan(vfov/2) / tan(hfov/2))}</height>
+							<format>R8G8B8</format>
+						</image>
+						<clip>
+							<near>${clip_near}</near>
+							<far>${clip_far}</far>
+						</clip>
+					</camera>
+					<plugin name="DepthCamera" filename="libgazebo_ros_openni_kinect.so">
+						<baseline>0.25</baseline> <!-- Unused -->
+						<alwaysOn>true</alwaysOn>
+						<updateRate>0.0</updateRate>
+						<cameraName>DepthCamera</cameraName>
+						<imageTopicName>${namespace}/${faux_depth_namespace}/color/image_raw</imageTopicName>
+						<cameraInfoTopicName>${namespace}/${faux_depth_namespace}/color/camera_info</cameraInfoTopicName>
+						<depthImageTopicName>${namespace}/${faux_depth_namespace}/depth/image_raw</depthImageTopicName>
+						<depthImageCameraInfoTopicName>${namespace}/${faux_depth_namespace}/depth/camera_info</depthImageCameraInfoTopicName>
+						<pointCloudTopicName>${namespace}/${faux_depth_namespace}/depth/points</pointCloudTopicName>
+						<frameName>${sonar_link}</frameName>
+						<pointCloudCutoff>${clip_near}</pointCloudCutoff>
+						<pointCloudCutoffMax>${clip_far}</pointCloudCutoffMax>
+					</plugin>
+				</sensor>
+			</xacro:if>
+		</gazebo>
+	</xacro:macro>
+
+	
+	<!-- ================= -->
+	<!-- Macro for Ping360 -->
+	<xacro:macro name="ping360_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
+		<link name="${prefix}ping360_sonar_link">
+			<inertial>
+				<mass value="0.1" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+			</inertial>
+			<visual name="visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder length="0.12" radius="0.04" />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.1 0.1 0.1" />
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${prefix}ping360_sonar_joint" type="revolute">
+			<xacro:insert_block name="joint_origin"/>
+			<xacro:insert_block name="joint_axis"/>
+			<parent link="${parent_link}" />
+			<child link="${prefix}ping360_sonar_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+		</joint>
+
+		<!-- Add the sonar plugin -->
+		<xacro:sonar_macro
+			sonar_link="${prefix}ping360_sonar_link" topic="ping360_sonar"
+			hfov="${120*deg2rad}" vfov="${25*deg2rad}" bin_count="1024" beam_count="128"
+			image_width="1024" image_height="1024" clip_near="0.75" clip_far="10.0"
+			image_format="R32G32B32" faux_depth="true" faux_depth_namespace="ping360_sim_depth"
+			prefix="${prefix}" namespace="${namespace}" gravity="${gravity}"
+		/>
+	</xacro:macro>
+
+
+	<!-- ============= -->
+	<!-- Macro for MBE -->
+	<xacro:macro name="mbe_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
+		<link name="${prefix}mbe_sonar_link">
+			<inertial>
+				<mass value="0.78" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+			</inertial>
+			<visual name="visual_cylinder">
+				<origin xyz="0.044 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder length="0.0423" radius="0.05" />
+				</geometry>
+				<material name="mbe_material">
+					<ambient>0.3 0.6 0.1 1</ambient>
+					<diffuse>0.6 0.6 0.6 1</diffuse>
+					<specular>0.2 0.2 0.2 0</specular>
+					<emissive>0 0 0 1</emissive>
+				</material>
+			</visual>
+			<visual name="visual_box">
+				<origin xyz="-0.011 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.11 0.1 0.0423" />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.1 0.1 0.1" />
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${prefix}mbe_sonar_joint" type="revolute">
+			<xacro:insert_block name="joint_origin"/>
+			<xacro:insert_block name="joint_axis"/>
+			<parent link="${parent_link}" />
+			<child link="${prefix}mbe_sonar_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+		</joint>
+
+		<!-- Add the sonar plugin -->
+		<xacro:sonar_macro
+			sonar_link="${prefix}mbe_sonar_link" topic="mbe_sonar"
+			hfov="${90*deg2rad}" vfov="${20*deg2rad}" bin_count="1024" beam_count="256"
+			image_width="1024" image_height="1024" clip_near="0.3" clip_far="10.0"
+			image_format="R32G32B32" prefix="${prefix}" namespace="${namespace}"
+			gravity="${gravity}"
+		/>
+	</xacro:macro>
+</robot>

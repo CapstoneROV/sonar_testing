@@ -44,6 +44,6 @@ The dummy box has 2 sonars attached representative of the MBE and the Ping360 so
 ![Animation of program](./assets/0.gif)
 
 ### Point cloud
-The simulation includes a point cloud from the `ping360_sonar_link` using the Kinect depth camera plugin. The characteristics of the depth camera is similar to the Ping360 sonar and can be modified in the URDF file. The point cloud is published on topic `/dummy/ping360_depth/depth/points`, and the update rate is set to 1Hz.
+The simulation includes a point cloud from the `ping360_sonar_link` using the Kinect depth camera plugin. The characteristics of the depth camera is similar to the Ping360 sonar and can be modified in the URDF file. The point cloud is published on topic `/dummy/ping360_sim_depth/depth/points`, and the update rate is set to 1Hz.
 
 ![Animation of program with point cloud](./assets/1.gif)
