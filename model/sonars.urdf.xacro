@@ -3,7 +3,7 @@
 	<xacro:property name="deg2rad" value="${pi / 180}"/>
 
 	<!-- ================================= -->
-	<!-- Macro for the sonar sensor itself -->
+	<!-- Macro for sonar sensor -->
 	<xacro:macro name="sonar_macro" params=
 		"sonar_link topic hfov vfov bin_count beam_count image_width image_height
 		clip_near clip_far image_format=R32G32B32 disable_color:=true
@@ -71,6 +71,48 @@
 					</plugin>
 				</sensor>
 			</xacro:if>
+		</gazebo>
+	</xacro:macro>
+
+	<!-- =================== -->
+	<!-- Macro for altimeter -->
+	<xacro:macro name="altimeter_macro" params=
+		"alti_link topic update_rate range_min range_max range_resolution
+		noise_mean noise_stddev visualize:=true prefix:=^ namespace:=^ gravity:=^"
+	>
+		<gazebo reference="${alti_link}">
+			<!-- Plugin for altimeter -->
+			<xacro:unless value="${gravity}">
+				<turnGravityOff>1</turnGravityOff>
+			</xacro:unless>
+			<sensor type="ray" name="Altimeter">
+				<visualize>${visualize}</visualize>
+				<update_rate>${update_rate}</update_rate>
+				<ray>
+					<scan>
+						<horizontal>
+						<samples>1</samples>
+						<resolution>1</resolution>
+						<min_angle>0.0</min_angle>
+						<max_angle>0.0</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>${range_min}</min>
+						<max>${range_max}</max>
+						<resolution>${range_resolution}</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>${noise_mean}</mean>
+						<stddev>${noise_stddev}</stddev>
+					</noise>
+				</ray>
+				<plugin name="Altimeter" filename="libgazebo_ros_laser.so">
+					<topicName>${namespace}/${topic}</topicName>
+					<frameName>${alti_link}</frameName>
+				</plugin>
+			</sensor>
 		</gazebo>
 	</xacro:macro>
 
@@ -165,6 +207,46 @@
 			image_width="1024" image_height="1024" clip_near="0.3" clip_far="10.0"
 			image_format="R32G32B32" prefix="${prefix}" namespace="${namespace}"
 			gravity="${gravity}"
+		/>
+	</xacro:macro>
+
+	
+	<!-- ================= -->
+	<!-- Macro for Ping2 -->
+	<xacro:macro name="ping2_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
+		<link name="${prefix}ping2_link">
+			<inertial>
+				<mass value="0.01" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+			</inertial>
+			<visual name="visual">
+				<origin xyz="0 0 0" rpy="0 1.57079632679 0" />
+				<geometry>
+					<cylinder length="0.041" radius="0.025" />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.1 0.1 0.1" />
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${prefix}ping2_joint" type="revolute">
+			<xacro:insert_block name="joint_origin"/>
+			<xacro:insert_block name="joint_axis"/>
+			<parent link="${parent_link}" />
+			<child link="${prefix}ping2_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+		</joint>
+
+		<!-- Add the altimeter plugin -->
+		<xacro:altimeter_macro
+			alti_link="${prefix}ping2_link" topic="ping2_ray"
+			update_rate="5" range_min="0.3" range_max="50" range_resolution="0.01"
+			noise_mean="0.0" noise_stddev="0.05" visualize="true"
+			prefix="${prefix}" namespace="${namespace}" gravity="${gravity}"
 		/>
 	</xacro:macro>
 </robot>

@@ -214,6 +214,65 @@
     </sensor>
   </gazebo>
 
+  <!-- Mount Ping2 -->
+  <link name="ping2_link">
+    <inertial>
+      <mass value="0.187" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
+    </inertial>
+    <visual name="visual">
+      <origin xyz="0 0 0" rpy="0 1.57079632679 0" />
+      <geometry>
+        <cylinder length="0.041" radius="0.025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="ping2_joint" type="revolute">
+    <origin xyz="0.0 0.15 -0.175" rpy="0 1.57079632679 0" />
+    <axis xyz="0 0 1" />
+    <parent link="base_link" />
+    <child link="ping2_link" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+  <gazebo reference="ping2_link">
+    <turnGravityOff>1</turnGravityOff>
+    <sensor type="ray" name="Ping2">
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>50.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.05</stddev>
+        </noise>
+      </ray>
+      <plugin name="Ping2" filename="libgazebo_ros_laser.so">
+        <topicName>/dummy/ping2_ray</topicName>
+        <frameName>ping2_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
   <!-- This separation is incredibly crucial:
         https://github.com/gazebosim/ros_gz/issues/109#issuecomment-689142931
         https://classic.gazebosim.org/tutorials?tut=ros_gzplugins
@@ -237,7 +296,7 @@
     <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
       <robotNamespace>dummy</robotNamespace>
       <!-- Must have this list of joints -->
-      <jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint</jointName>
+      <jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint, ping2_joint</jointName>
       <updateRate>30</updateRate>
     </plugin>
 

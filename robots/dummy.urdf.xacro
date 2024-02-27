@@ -89,7 +89,7 @@
 		<plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
 			<robotNamespace>dummy</robotNamespace>
 			<!-- Must have this list of joints -->
-			<jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint</jointName>
+			<jointName>imu_joint, ping360_sonar_joint, mbe_sonar_joint, ping2_joint</jointName>
 			<updateRate>30</updateRate>
 		</plugin>
 
@@ -105,6 +105,7 @@
 	</gazebo>
 
 	<!-- Mount the sonars -->
+  <!-- Attention: need to update joint_state_publisher above-->
 	<xacro:include filename="../model/sonars.urdf.xacro"/>
 	<xacro:ping360_macro parent_link="base_link" namespace="/dummy" gravity="false">
 		<origin xyz="0.15 0 0.175" rpy="0 0 0"/>
@@ -114,4 +115,8 @@
     <origin xyz="0.15 0 -0.2" rpy="0 0.174533 0"/>
     <axis xyz="0 0 1"/>
 	</xacro:mbe_macro>
+	<xacro:ping2_macro parent_link="base_link" namespace="/dummy" gravity="false">
+    <origin xyz="0.0 0.15 -0.175" rpy="0 1.57079632679 0" />
+    <axis xyz="0 0 1" />
+	</xacro:ping2_macro>
 </robot>
