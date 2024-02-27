@@ -152,6 +152,7 @@ add_library(dummy_plugin
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/gpp_testing_node.cpp)
 add_executable(sonar_transformer src/sonar_transformer.cpp)
+add_executable(3d_reconstruction src/3d_reconstruction.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -173,6 +174,7 @@ target_link_libraries(dummy_plugin
 	${GAZEBO_LIBRARIES}
 )
 target_link_libraries(sonar_transformer ${catkin_LIBRARIES})
+target_link_libraries(3d_reconstruction ${catkin_LIBRARIES})
 
 #############
 ## Install ##

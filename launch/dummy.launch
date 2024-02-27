@@ -1,5 +1,4 @@
 <launch>
-
   <!-- Arguments -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
