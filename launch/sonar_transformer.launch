@@ -9,6 +9,7 @@
   <arg name="beam_count" default="0"/>
   <arg name="bin_count" default="0"/>
   <arg name="horizontal_fov" default="0.0"/>
+  <arg name="ccw_offset" default="0.0"/>
 
   <!-- Launch sonar_transformer: http://wiki.ros.org/roslaunch/XML/node -->
   <node name="sonar_transformer" pkg="sonar_testing" type="sonar_transformer">
@@ -21,6 +22,7 @@
     <param name="beam_count" value="$(arg beam_count)"/>
     <param name="bin_count" value="$(arg bin_count)"/>
     <param name="horizontal_fov" value="$(arg horizontal_fov)"/>
+    <param name="ccw_offset" value="$(arg ccw_offset)"/>
   </node>
 
 </launch>

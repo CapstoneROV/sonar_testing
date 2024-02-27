@@ -14,11 +14,6 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
-{
-    ROS_INFO("I heard: [%s]", msg->data.c_str());
-}
-
 /// @brief Class to store image transform map and publish images 
 class ImageTransformer{
 public:
@@ -39,6 +34,7 @@ public:
             nh->getParam("beam_count", beam_count) &
             nh->getParam("bin_count", bin_count) &
             nh->getParam("horizontal_fov", horizontal_fov);
+            nh->param<float>("ccw_offset", ccw_offset, 0);
         
         // Initialize publisher, subscriber and maps
         if (result)
@@ -53,7 +49,7 @@ public:
             
             for (int i = 0; i < beam_count; i++)
                 for (int j = 0; j < bin_count; j++) {
-                    float theta = i * horizontal_fov / beam_count - horizontal_fov / 2;
+                    float theta = i * horizontal_fov / beam_count - horizontal_fov / 2 + ccw_offset;
                     float r_max = sqrt(pow(top_x - origin_x, 2) + pow(top_y - origin_y, 2));
                     float radius = j * r_max / bin_count;
                     map_x.at<float>(j, i) = origin_x - radius * sin(theta);
@@ -94,6 +90,7 @@ public:
     float origin_x, origin_y, top_x, top_y;
     int beam_count, bin_count;
     float horizontal_fov;
+    float ccw_offset;
 
     // Image transport variables
     image_transport::ImageTransport it;

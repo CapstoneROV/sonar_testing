@@ -10,7 +10,7 @@
   <arg name="topics_ns" default="dummy"/>
 
   <!-- Send URDF to param server -->
-  <param name="robot_description" textfile="$(find sonar_testing)/urdf/dummy.urdf"/>
+  <param name="robot_description" command="xacro $(find sonar_testing)/robots/dummy.urdf.xacro"/>
 
   <!-- Launch world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -57,5 +57,6 @@
     <param name="beam_count" value="128"/>
     <param name="bin_count" value="512"/>
     <param name="horizontal_fov" value="2.09439510239"/>
+    <param name="ccw_offset" value="0.0"/>
   </node>
 </launch>
