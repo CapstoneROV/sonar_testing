@@ -59,6 +59,6 @@
     <!-- Linking to Gazebo courtesy of:
         https://answers.gazebosim.org//question/18726/using-ros-pluggin-catkin-build/
     -->
-    <gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />
+    <gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}/models" />
   </export>
 </package>

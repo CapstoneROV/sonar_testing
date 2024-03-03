@@ -217,6 +217,9 @@ target_link_libraries(3d_reconstruction ${catkin_LIBRARIES})
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+install(DIRECTORY models
+	DESTINATION share/${PROJECT_NAME}
+)
 
 #############
 ## Testing ##
