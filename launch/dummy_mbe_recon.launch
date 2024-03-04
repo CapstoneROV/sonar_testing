@@ -24,7 +24,7 @@
     <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 1 -model dummy" respawn="false" output="screen"/>
   
     <!-- Launch RVIZ -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sonar_testing)/rviz/sonar_view.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sonar_testing)/rviz/sonar_view_mbe_reconstruct.rviz"/>
   
     <!-- Publish robot TF, using joint states published in the URDF -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="dummy_publisher">
@@ -61,12 +61,20 @@
     <node name="mbe_3d_reconstruction" pkg="sonar_testing" type="3d_reconstruction">
       <param name="rect_topic" value="/dummy/mbe_sonar_rect"/>
       <param name="edge_topic" value="/dummy/mbe_sonar_edge"/>
+      <param name="pcl_topic" value="/dummy/mbe_line_scan"/>
+      <param name="sonar_frame" value="mbe_sonar_link"/>
+      <param name="world_frame" value="map"/>
       <param name="threshold" value="30"/>
       <param name="min_area" value="20"/>
       <param name="min_ratio" value="0.2"/>
-      <param name="skip_bins" value="20"/>
+      <param name="min_range" value="0.5"/>
       <param name="max_range" value="10.0"/>
       <param name="horizontal_fov" value="1.57079632679"/>
+      <param name="vertical_fov" value="0.34906585039"/>
+    </node>
+    <node name="pointcloud_registration" pkg="pointcloud_registration" type="pointcloud_registration_node">
+      <param name="subscribe_pointcloud_topic" value="/dummy/mbe_line_scan"></param>
+      <param name="publish_merged_pointcloud_topic" value="/mbe_reconstructed_pointcloud"></param>
     </node>
   </launch>
   

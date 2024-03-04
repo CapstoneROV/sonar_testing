@@ -19,11 +19,14 @@ find_package(catkin REQUIRED COMPONENTS
 	sensor_msgs
 	image_transport
 	cv_bridge
+	tf2_ros
+	pcl_conversions
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(gazebo REQUIRED)
+find_package(PCL REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
