@@ -7,7 +7,7 @@
 	<xacro:macro name="sonar_macro" params=
 		"sonar_link topic hfov vfov bin_count beam_count image_width image_height
 		clip_near clip_far image_format=R32G32B32 disable_color:=true
-		faux_depth:=false faux_depth_namespace:=''
+		faux_depth:=false faux_depth_link:='' faux_depth_namespace:=''
 		prefix:=^ namespace:=^ gravity:=^"
 	>
 		<gazebo reference="${sonar_link}">
@@ -64,7 +64,7 @@
 						<depthImageTopicName>${namespace}/${faux_depth_namespace}/depth/image_raw</depthImageTopicName>
 						<depthImageCameraInfoTopicName>${namespace}/${faux_depth_namespace}/depth/camera_info</depthImageCameraInfoTopicName>
 						<pointCloudTopicName>${namespace}/${faux_depth_namespace}/depth/points</pointCloudTopicName>
-						<frameName>${sonar_link}</frameName>
+						<frameName>${faux_depth_link}</frameName>
 						<pointCloudCutoff>${clip_near}</pointCloudCutoff>
 						<pointCloudCutoffMax>${clip_far}</pointCloudCutoffMax>
 					</plugin>
@@ -145,13 +145,27 @@
 			<child link="${prefix}ping360_sonar_link" />
 			<limit upper="0" lower="0" effort="0" velocity="0" />
 		</joint>
+		<link name="${prefix}ping360_depth_link">
+			<inertial>
+				<mass value="0.0001" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.0001" ixy="0.0001" ixz="0.0001" iyy="0.0001" iyz="0.0001" izz="0.0001" />
+			</inertial>
+		</link>
+		<joint name="${prefix}ping360_depth_joint" type="revolute">
+			<origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+			<axis xyz="0 0 1"/>
+			<parent link="${prefix}ping360_sonar_link" />
+			<child link="${prefix}ping360_depth_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+		</joint>
 
 		<!-- Add the sonar plugin -->
 		<xacro:sonar_macro
 			sonar_link="${prefix}ping360_sonar_link" topic="ping360_sonar"
 			hfov="${120*deg2rad}" vfov="${25*deg2rad}" bin_count="1024" beam_count="128"
-			image_width="1024" image_height="1024" clip_near="0.75" clip_far="10.0"
-			image_format="R8G8B8" faux_depth="true" faux_depth_namespace="ping360_sim_depth"
+			image_width="1024" image_height="1024" clip_near="0.75" clip_far="10.0" image_format="R8G8B8"
+			faux_depth="true" faux_depth_link="${prefix}ping360_depth_link" faux_depth_namespace="ping360_sim_depth"
 			prefix="${prefix}" namespace="${namespace}" gravity="${gravity}"
 		/>
 	</xacro:macro>
