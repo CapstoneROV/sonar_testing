@@ -105,8 +105,7 @@ public:
         }
         // Draw the largest contours & detect the topmost edge
         std::vector<std::vector<cv::Point>> edge_contours(1, std::vector<cv::Point>());
-        cv::Mat thick_borders = cv::Mat(bin_count, beam_count, CV_8UC1);
-        thick_borders.setTo(0);
+        cv::Mat thick_borders = cv::Mat::zeros(bin_count, beam_count, CV_8UC1);
         cv::drawContours(thick_borders, large_contours, -1, 255, 2);
         std::vector<int> edges = std::vector<int>(beam_count, bin_count);
         float skip_bins = bin_count * min_range / max_range;
@@ -120,8 +119,18 @@ public:
             }
 
         // Draw final edge on image
-        cv::polylines(dest, edge_contours, false, 255);
-        cv_ptr->image = dest;
+        cv::Mat bg_channels[3] = {
+            cv_ptr->image, cv_ptr->image, cv_ptr->image
+        };
+        cv::Mat fg_channels[3] = {
+            cv_ptr->image + dest, cv_ptr->image + dest, cv_ptr->image
+        };
+        cv::Mat bg, fg;
+        cv::merge(bg_channels, 3, bg);
+        cv::merge(fg_channels, 3, fg);
+        cv::addWeighted(bg, 0.5, fg, 0.5, 0, cv_ptr->image);
+        cv_ptr->encoding = "bgr8";
+        cv::polylines(cv_ptr->image, edge_contours, false, cv::Scalar(255, 255, 255));
 
         // Publish image
         pub_img.publish(cv_ptr->toImageMsg());
