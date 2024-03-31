@@ -121,7 +121,7 @@
 	<xacro:macro name="ping360_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
 		<link name="${prefix}ping360_sonar_link">
 			<inertial>
-				<mass value="0.1" />
+				<mass value="0.00001" />
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
 			</inertial>
@@ -176,7 +176,8 @@
 	<xacro:macro name="mbe_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
 		<link name="${prefix}mbe_sonar_link">
 			<inertial>
-				<mass value="0.78" />
+				<!-- <mass value="0.78" /> -->
+				<mass value="0.00001" />
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
 			</inertial>
@@ -229,7 +230,7 @@
 	<xacro:macro name="ping2_macro" params="parent_link *joint_origin *joint_axis prefix:='' namespace:='' gravity:=true">
 		<link name="${prefix}ping2_link">
 			<inertial>
-				<mass value="0.01" />
+				<mass value="0.00001" />
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<inertia ixx="0.01" ixy="0.001" ixz="0.001" iyy="0.01" iyz="0.001" izz="0.01" />
 			</inertial>
