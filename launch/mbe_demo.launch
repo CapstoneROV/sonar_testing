@@ -1,0 +1,47 @@
+<launch>
+  <!-- Launch grid remover to clean up sonar image -->
+  <node name="grid_remover" pkg="sonar_testing" type="grid_remover">
+    <param name="src_topic" value="/movie"/>
+    <param name="dst_topic" value="/movie_gud"/>
+    <param name="mask_file" value="$(find sonar_testing)/assets/e40m.jpg"/>
+    <param name="mask_threshold" value="150"/>
+    <param name="mask_erode_size" value="3"/>
+    <param name="blur_size" value="15"/>
+  </node>
+
+  <!-- Launch sonar image converters, from fan shape to rectangular -->
+  <node name="mbe_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="/movie_gud"/>
+    <param name="rect_topic" value="/movie_rect"/>
+    <param name="origin_x" value="960"/>
+    <param name="origin_y" value="1019"/>
+    <param name="top_x" value="960"/>
+    <param name="top_y" value="40"/>
+    <param name="beam_count" value="256"/>
+    <param name="bin_count" value="512"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+  </node>
+
+  <node name="mbe_3d_reconstruction" pkg="sonar_testing" type="3d_reconstruction">
+    <param name="rect_topic" value="/movie_rect"/>
+    <param name="edge_topic" value="/movie_edge"/>
+    <param name="pcl_topic" value="/movie_scan"/>
+    <param name="sonar_frame" value="map"/>
+    <param name="world_frame" value="map"/>
+    <param name="threshold" value="60"/>
+    <param name="min_area" value="30"/>
+    <param name="min_ratio" value="0.05"/>
+    <param name="min_range" value="0.75"/>
+    <param name="max_range" value="40.0"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+    <param name="vertical_fov" value="0.34906585039"/>
+  </node>
+
+  <include file="$(find movie_publisher)/movie_publisher.launch">
+    <arg name="movie_file" value="$(find sonar_testing)/assets/gray-40m-ct0-g0.mp4"/>
+    <arg name="loop" value="true"/>
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sonar_testing)/rviz/grid_remover.rviz"/>
+</launch>
+  

@@ -1,0 +1,20 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="src_topic" default="null_src_topic"/>
+  <arg name="dst_topic" default="null_dst_topic"/>
+  <arg name="mask_file" default="null_file"/>
+  <arg name="mask_threshold" default="0"/>
+  <arg name="mask_erode_size" default="0"/>
+  <arg name="blur_size" default="0"/>
+
+  <!-- Launch snexx: http://wiki.ros.org/roslaunch/XML/node -->
+  <node name="grid_remover" pkg="sonar_testing" type="grid_remover">
+    <param name="src_topic" value="$(arg src_topic)"/>
+    <param name="dst_topic" value="$(arg dst_topic)"/>
+    <param name="mask_file" value="$(arg mask_file)"/>
+    <param name="mask_threshold" value="$(arg mask_threshold)"/>
+    <param name="mask_erode_size" value="$(arg mask_erode_size)"/>
+    <param name="blur_size" value="$(arg blur_size)"/>
+  </node>
+
+</launch>

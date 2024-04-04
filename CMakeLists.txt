@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(gazebo REQUIRED)
 find_package(PCL REQUIRED)
+find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -156,6 +157,7 @@ add_library(dummy_plugin
 # add_executable(${PROJECT_NAME}_node src/gpp_testing_node.cpp)
 add_executable(sonar_transformer src/sonar_transformer.cpp)
 add_executable(3d_reconstruction src/3d_reconstruction.cpp)
+add_executable(grid_remover src/grid_remover.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -178,6 +180,7 @@ target_link_libraries(dummy_plugin
 )
 target_link_libraries(sonar_transformer ${catkin_LIBRARIES})
 target_link_libraries(3d_reconstruction ${catkin_LIBRARIES})
+target_link_libraries(grid_remover ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##
