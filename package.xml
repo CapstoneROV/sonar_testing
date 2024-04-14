@@ -36,7 +36,7 @@
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
-  <depend>gazebo_ros roscpp std_msgs geeometry_msgs sensor_msgs image_transport cv_bridge tf2_ros pcl_ros pcl_conversions</depend>
+  <depend>gazebo_ros roscpp std_msgs geeometry_msgs sensor_msgs image_transport cv_bridge tf2_ros pcl_ros pcl_conversions tf2_sensor_msgs</depend>
   <!-- Use build_depend for packages you need at compile time: -->
   <!--   <build_depend>message_generation</build_depend> -->
   <!-- Use build_export_depend for packages you need in order to build against this package: -->

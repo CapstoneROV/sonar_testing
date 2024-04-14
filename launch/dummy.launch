@@ -34,6 +34,10 @@
   <!-- Bridge map and base_link, using gazebo_ros_p3d output in the URDF -->
   <node pkg="message_to_tf" type="message_to_tf" name="map_to_dummy" args="dummy/base_link"/>
 
+  <!-- Transform point cloud to map-->
+  <node name="pcltransform_node" pkg="sonar_testing" type="pcltransformer" output="screen">
+  </node>
+
   <!-- Launch sonar image converters, from fan shape to rectangular -->
   <node name="mbe_transformer" pkg="sonar_testing" type="sonar_transformer">
     <param name="fan_topic" value="/dummy/mbe_sonar"/>
