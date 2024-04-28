@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 	cv_bridge
 	tf2_ros
 	pcl_conversions
-	tf2_sensor_msgs
+	message_filters
 )
 
 ## System dependencies are found with CMake's conventions
@@ -180,7 +180,7 @@ target_link_libraries(dummy_plugin
 )
 target_link_libraries(sonar_transformer ${catkin_LIBRARIES})
 target_link_libraries(3d_reconstruction ${catkin_LIBRARIES})
-target_link_libraries(pcltransformer ${catkin_LIBRARIES})
+target_link_libraries(pcltransformer ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 #############
 ## Install ##
