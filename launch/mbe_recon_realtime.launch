@@ -1,0 +1,60 @@
+<launch>
+  <!-- Launch grid remover to clean up sonar image -->
+  <node name="grid_remover" pkg="sonar_testing" type="grid_remover">
+    <param name="src_topic" value="/camera/image_raw"/>
+    <param name="dst_topic" value="/movie_gud"/>
+    <param name="mask_file" value="$(find sonar_testing)/assets/e40m-half.png"/>
+    <param name="mask_threshold" value="15"/>
+    <param name="mask_erode_size" value="1"/>
+    <param name="blur_size" value="3"/>
+    <param name="mbe_sim_time" value="true"/>
+    <param name="mbe_delay" value="0.3"/>
+  </node>
+
+  <!-- Launch sonar image converters, from fan shape to rectangular -->
+  <node name="mbe_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="/movie_gud"/>
+    <param name="rect_topic" value="/mbe_stream"/>
+    <param name="origin_x" value="480"/>
+    <param name="origin_y" value="509"/>
+    <param name="top_x" value="480"/>
+    <param name="top_y" value="20"/>
+    <param name="beam_count" value="256"/>
+    <param name="bin_count" value="512"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+  </node>
+
+  <!-- Launch reconstruction -->
+  <node name="mbe_3d_reconstruction" pkg="sonar_testing" type="3d_reconstruction">
+    <param name="rect_topic" value="/mbe_stream"/>
+    <param name="edge_topic" value="/mbe_edge"/>
+    <param name="pcl_topic" value="/mbe_line_scan"/>
+    <param name="sonar_frame" value="mbe_link"/>
+    <param name="world_frame" value="map"/>
+    <param name="threshold" value="10"/>
+    <param name="min_area" value="50"/>
+    <param name="min_ratio" value="0.3"/>
+    <param name="min_range" value="0.75"/>
+    <param name="max_range" value="40.0"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+    <param name="vertical_fov" value="0.34906585039"/>
+    <!-- <param name="floor_topic" value="/mavros/rangefinder/rangefinder"/>
+    <param name="floor_margin" value="0.5"/> -->
+  </node>
+
+  <!-- Publish TF frames -->
+  <node pkg="pose_to_tf" type="pose_to_tf_rebroadcaster.py" name="p2f" args="--config $(find pose_to_tf)/configs/bluerov2_config.yaml"/>
+  <node pkg="tf" type="static_transform_publisher" name="mbe_linker" args="0.05 -0.05 -0.2 0 0.0872665 0 bluerov2_link mbe_link 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="ping360_linker" args="-0.1 0.05 0.1 0 0 0 bluerov2_link ping360_link 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="dvl_linker" args="-0.15 -0.05 -0.25 0 0 0 bluerov2_link dvl_link 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="rangefinder_linker" args="0 0 0 0 0 0 dvl_link rangefinder 100"/>
+  
+  <!-- Run RVIZ -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sonar_testing)/rviz/realtime.rviz"/>
+  
+  <node name="pointcloud_registration" pkg="pointcloud_registration" type="pointcloud_registration_node">
+    <param name="subscribe_pointcloud_topic" value="/mbe_line_scan"></param>
+    <param name="publish_merged_pointcloud_topic" value="/mbe_reconstructed_pointcloud"></param>
+  </node>
+</launch>
+  

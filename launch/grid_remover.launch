@@ -7,7 +7,7 @@
   <arg name="mask_erode_size" default="0"/>
   <arg name="blur_size" default="0"/>
 
-  <!-- Launch snexx: http://wiki.ros.org/roslaunch/XML/node -->
+  <!-- Launch grid_remover: http://wiki.ros.org/roslaunch/XML/node -->
   <node name="grid_remover" pkg="sonar_testing" type="grid_remover">
     <param name="src_topic" value="$(arg src_topic)"/>
     <param name="dst_topic" value="$(arg dst_topic)"/>
@@ -15,6 +15,8 @@
     <param name="mask_threshold" value="$(arg mask_threshold)"/>
     <param name="mask_erode_size" value="$(arg mask_erode_size)"/>
     <param name="blur_size" value="$(arg blur_size)"/>
+    <!-- (Optional) <param name="mbe_sim_time" value="true"/>
+    <param name="mbe_delay" value="0.3"/> -->
   </node>
 
 </launch>

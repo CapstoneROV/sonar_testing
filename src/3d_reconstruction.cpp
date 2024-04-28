@@ -17,6 +17,9 @@
  * https://pointclouds.org/documentation/singletonpcl_1_1_point_cloud.html#details
  * https://pointclouds.org/documentation/tutorials/matrix_transform.html
  * https://answers.ros.org/question/362734/how-to-get-the-transformation-matrix-from-translation-and-rotation/
+ * 
+ * Approximate-time synchronizer:
+ * https://answers.ros.org/question/280856/synchronizer-with-approximate-time-policy-in-a-class-c/
  */
 
 #include "ros/ros.h"
@@ -30,7 +33,12 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
+#include <pcl/filters/passthrough.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/Range.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 
 /// @brief Class to store image transform map and publish images 
 class ImageTransformer{
@@ -55,12 +63,22 @@ public:
             nh->getParam("max_range", max_range) &
             nh->getParam("horizontal_fov", horizontal_fov) &
             nh->getParam("vertical_fov", vertical_fov);
+            nh->param<std::string>("floor_topic", floor_topic, "");
+            nh->param<float>("floor_margin", floor_margin, 0.0);
         
         // Initialize publisher, subscriber and maps
         if (result)
         {
             // Subscribe & publicize
-            sub = it.subscribe(rect_topic, 1, &ImageTransformer::callback, this);
+            floor_enabled = !floor_topic.empty();
+            if (!floor_enabled)
+                sub = it.subscribe(rect_topic, 1, &ImageTransformer::callback, this);
+            else {
+                image_sub.subscribe(*nh, rect_topic, 10);
+                range_sub.subscribe(*nh, floor_topic, 10);
+                time_sync.reset(new Sync(sync_policy(10), image_sub, range_sub));      
+                time_sync->registerCallback(boost::bind(&ImageTransformer::callback_sync, this, _1, _2));
+            }
             pub_img = it.advertise(edge_topic, 1);
             pub_pcl = nh->advertise<sensor_msgs::PointCloud2>(pcl_topic, 5);
 
@@ -71,6 +89,10 @@ public:
     /// @brief Callback function to process image
     /// @param msg Sonar rectangle image message 
     void callback(const sensor_msgs::ImageConstPtr& msg) {
+        // Get volatile floor value
+        float _floor = 0;
+        if (floor_enabled) _floor = floor;
+
         // Try to convert to cv - this is dependent on the process on sonar side
         cv_bridge::CvImagePtr cv_ptr;
         ros::Time msg_time;
@@ -144,6 +166,7 @@ public:
             ROS_WARN("%s", ex.what());
             return;
         }
+
         // Publish the point cloud
         pcl::PointCloud<pcl::PointXYZ> pcl_cloud, tmp_cloud_1;
         for (int i = 0; i < beam_count; i++) {
@@ -161,6 +184,19 @@ public:
         // Move to world frame & convert to PointCloud2
         Eigen::Affine3d tf_matrix = tf2::transformToEigen(transform.transform);
         pcl::transformPointCloud(pcl_cloud, tmp_cloud_1, tf_matrix);
+
+        // Get global floor value
+        if (floor_enabled) {
+            Eigen::Vector3f floor_vector = Eigen::Affine3f(tf_matrix) * Eigen::Vector3f(0, 0, -_floor);
+            float z = floor_vector[2], margin = abs(z) * floor_margin;
+            pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_in = tmp_cloud_1.makeShared();
+            pcl::PassThrough<pcl::PointXYZ> pass;
+            pass.setInputCloud(cloud_in);
+            pass.setFilterFieldName("z");
+            pass.setFilterLimits(z - margin, z + margin);
+            pass.filter(tmp_cloud_1);
+        }
+
         pcl::PCLPointCloud2 tmp_cloud_2;
         pcl::toPCLPointCloud2(tmp_cloud_1, tmp_cloud_2);
 
@@ -170,6 +206,17 @@ public:
         ros_cloud.header.frame_id = world_frame;
         ros_cloud.header.stamp = msg_time;
         pub_pcl.publish(ros_cloud);
+    }
+
+    /// @brief Callback function to process both image and range
+    /// @param image_msg Sonar rectangle image message 
+    /// @param range_msg Floor range message 
+    void callback_sync(
+        const sensor_msgs::ImageConstPtr& image_msg,
+        const sensor_msgs::RangeConstPtr& range_msg
+    ) {
+        floor = range_msg->range;
+        callback(image_msg);
     }
 
 public:
@@ -188,6 +235,17 @@ public:
     tf2_ros::Buffer tf_buffer;
     tf2_ros::TransformListener tf_listener;
     ros::Publisher pub_pcl;
+
+    // (Optional) rangefinder variables
+    std::string floor_topic;
+    float floor_margin;
+    bool floor_enabled;
+    volatile float floor;
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Range> sync_policy;
+    typedef message_filters::Synchronizer<sync_policy> Sync;
+    message_filters::Subscriber<sensor_msgs::Image> image_sub;
+    message_filters::Subscriber<sensor_msgs::Range> range_sub;
+    boost::shared_ptr<Sync> time_sync;
 };
 
 int main(int argc, char **argv)
