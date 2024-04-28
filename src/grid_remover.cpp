@@ -32,6 +32,8 @@ public:
             nh->getParam("mask_threshold", mask_threshold) &
             nh->getParam("mask_erode_size", mask_erode_size) &
             nh->getParam("blur_size", blur_size);
+            nh->param<bool>("mbe_sim_time", mbe_sim_time, false);
+            nh->param<float>("mbe_delay", mbe_delay, -1.0);
         
         // Initialize publisher, subscriber and maps
         if (result)
@@ -77,7 +79,9 @@ public:
         }
 
         // Create resulting image
-        cv::Mat bg, fg, tmp = cv::Mat::zeros(cv_ptr->image.size(), cv_ptr->image.type());
+        cv::Mat bg = cv::Mat::zeros(cv_ptr->image.size(), cv_ptr->image.type()),
+                fg = cv::Mat::zeros(cv_ptr->image.size(), cv_ptr->image.type()),
+                tmp = cv::Mat::zeros(cv_ptr->image.size(), cv_ptr->image.type());
         cv::bitwise_and(cv_ptr->image, cv_ptr->image, fg, mask);
         cv::blur(
             fg, bg,
@@ -89,13 +93,18 @@ public:
         cv::add(tmp, fg, cv_ptr->image);
 
         // Publish image with grid removed
-        pub.publish(cv_ptr->toImageMsg());
+        sensor_msgs::ImagePtr img_msg = cv_ptr->toImageMsg();
+        if (mbe_sim_time) img_msg->header.stamp = ros::Time::now();
+        if (mbe_delay > 0) img_msg->header.stamp -= ros::Duration(mbe_delay);
+        pub.publish(img_msg);
     }
 
 public:
     // Parameters
     std::string src_topic, dst_topic, mask_file;
     int mask_threshold, mask_erode_size, blur_size;
+    bool mbe_sim_time;
+    float mbe_delay;
 
     // Image transport variables
     image_transport::ImageTransport it;
