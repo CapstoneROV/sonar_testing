@@ -121,7 +121,7 @@ public:
 
             // Get contour aspect ratio
             cv::Rect bbox = cv::boundingRect(contours[i]);
-            float contour_ratio = bbox.width * 1.0 / bbox.height;
+            float contour_ratio = bbox.height * 1.0 / bbox.width;
             if (contour_area > min_area && contour_ratio > min_ratio)
                 large_contours.push_back(contours[i]);
         }
