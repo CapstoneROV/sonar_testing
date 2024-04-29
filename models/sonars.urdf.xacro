@@ -218,7 +218,7 @@
 		<xacro:sonar_macro
 			sonar_link="${prefix}mbe_sonar_link" topic="mbe_sonar"
 			hfov="${90*deg2rad}" vfov="${20*deg2rad}" bin_count="1024" beam_count="256"
-			image_width="1024" image_height="1024" clip_near="0.3" clip_far="10.0"
+			image_width="1024" image_height="1024" clip_near="0.3" clip_far="40.0"
 			image_format="R8G8B8" prefix="${prefix}" namespace="${namespace}"
 			gravity="${gravity}"
 		/>

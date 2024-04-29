@@ -1,0 +1,30 @@
+<launch>
+  <!-- Launch grid remover to clean up sonar image -->
+  <node name="grid_remover" pkg="sonar_testing" type="grid_remover">
+    <param name="src_topic" value="/camera/image_raw"/>
+    <param name="dst_topic" value="/movie_gud"/>
+    <param name="mask_file" value="$(find sonar_testing)/assets/e40m-half.png"/>
+    <param name="mask_threshold" value="15"/>
+    <param name="mask_erode_size" value="1"/>
+    <param name="blur_size" value="3"/>
+    <param name="mbe_sim_time" value="true"/>
+    <param name="mbe_delay" value="0.4"/>
+  </node>
+
+  <!-- Launch sonar image converters, from fan shape to rectangular -->
+  <node name="mbe_transformer" pkg="sonar_testing" type="sonar_transformer">
+    <param name="fan_topic" value="/movie_gud"/>
+    <param name="rect_topic" value="/mbe_stream"/>
+    <param name="origin_x" value="480"/>
+    <param name="origin_y" value="509"/>
+    <param name="top_x" value="480"/>
+    <param name="top_y" value="20"/>
+    <param name="beam_count" value="256"/>
+    <param name="bin_count" value="512"/>
+    <param name="horizontal_fov" value="1.57079632679"/>
+  </node>
+
+
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find sonar_testing)/rviz/grid_remover.rviz"/> -->
+</launch>
+  

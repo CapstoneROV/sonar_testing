@@ -57,7 +57,7 @@ public:
                 cv::Size(blur_size, blur_size),
                 cv::Point(blur_size / 2, blur_size / 2)
             );
-            cv::cvtColor(mask_blurred, mask_blurred, cv::COLOR_GRAY2RGB);
+            // cv::cvtColor(mask_blurred, mask_blurred, cv::COLOR_GRAY2RGB);
         }
         
         _result = result;
@@ -70,7 +70,7 @@ public:
         cv_bridge::CvImagePtr cv_ptr;
         try
         {
-            cv_ptr = cv_bridge::toCvCopy(msg, msg->encoding);
+            cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
         }
         catch (cv_bridge::Exception& e)
         {
