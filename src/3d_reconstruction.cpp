@@ -185,6 +185,10 @@ public:
         Eigen::Affine3d tf_matrix = tf2::transformToEigen(transform.transform);
         pcl::transformPointCloud(pcl_cloud, tmp_cloud_1, tf_matrix);
 
+        // Check if roll angle is acceptable (+- 10 deg)
+        Eigen::Vector3d rpy = tf_matrix.rotation().eulerAngles(2, 1, 0).reverse();
+        if ((abs(rpy[0] * 180.0 / M_PI) > 10) && (abs(rpy[0] * 180.0 / M_PI) < 170)) return;
+
         // Get global floor value
         if (floor_enabled) {
             Eigen::Vector3f floor_vector = Eigen::Affine3f(tf_matrix) * Eigen::Vector3f(0, 0, -_floor);
