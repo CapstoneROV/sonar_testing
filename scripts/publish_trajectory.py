@@ -38,7 +38,7 @@ def publish_transforms(json_file):
 
     # Iterate through poses and publish each as a transform
     intervals = 20
-    delay = 1
+    delay = 0
     for i in range(len(data['times']) - 1):
         if rospy.is_shutdown():
             break
@@ -99,6 +99,6 @@ def publish_transforms(json_file):
             
 if __name__ == '__main__':
     try:
-        publish_transforms('/home/ardupilot/capstonerov/src/trajectory.json')
+        publish_transforms('/home/ardupilot/capstonerov/src/sonar_testing/scripts/trajectory.json')
     except rospy.ROSInterruptException:
         pass
